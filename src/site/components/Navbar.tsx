@@ -1,9 +1,43 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, ArrowRight } from "lucide-react";
+import { Menu, ArrowRight, X, ChevronDown, Mail, Phone } from "lucide-react";
 import clinexusLogoWhite from "@/assets/site/clinexus-logo-white.png";
+import clinexusLogo from "@/assets/site/clinexus-logo.png";
+
+const mobileGroups = [
+  {
+    label: "Industries",
+    items: [
+      { label: "All industries", to: "/industries" },
+      { label: "Eye clinics", to: "/industries/eye-clinics" },
+      { label: "Dental clinics", to: "/industries/dental-clinics" },
+    ],
+  },
+  {
+    label: "Features",
+    items: [
+      { label: "Eye clinic features", to: "/industries/eye-clinics/features" },
+      { label: "Dental clinic features", to: "/industries/dental-clinics/features" },
+    ],
+  },
+  {
+    label: "Resources",
+    items: [
+      { label: "Tutorials", to: "/tutorials" },
+      { label: "Privacy Policy", to: "/privacy" },
+      { label: "Terms of Service", to: "/terms" },
+      { label: "Cookie Policy", to: "/cookies" },
+    ],
+  },
+];
+
+const mobileDirect = [
+  { label: "Home", to: "/" },
+  { label: "Tutorials", to: "/tutorials" },
+  { label: "About", to: "/about" },
+  { label: "Contact", to: "/contact" },
+];
 
 const navLinks = [
   { label: "Home", to: "/" },
@@ -107,59 +141,144 @@ const Navbar = () => {
         </div>
 
         {/* Mobile hamburger */}
-        <Sheet open={open} onOpenChange={setOpen}>
-          <SheetTrigger asChild className="md:hidden">
-            <button
-              className={`rounded-xl p-2 transition-colors ${
-                darkHero ? "text-white hover:bg-white/10" : "hover:bg-muted"
-              }`}
-            >
-              <Menu className="h-5 w-5" />
-            </button>
-          </SheetTrigger>
-          <SheetContent side="right" className="w-[300px] p-0">
-            <div className="flex h-full flex-col">
-              <div className="flex items-center border-b border-border px-6 py-4">
-                <Link to="/" onClick={() => setOpen(false)}>
-                  <img src={clinexusLogoWhite} alt="Clinexus" className="h-8" />
-                </Link>
-              </div>
-
-              <div className="flex-1 overflow-y-auto px-4 py-6">
-                <div className="flex flex-col gap-1">
-                  {navLinks.map((link) => (
-                    <Link
-                      key={link.to}
-                      to={link.to}
-                      onClick={() => setOpen(false)}
-                      className={`rounded-xl px-4 py-3 text-sm font-medium transition-colors ${
-                        location.pathname === link.to
-                          ? "bg-primary/10 text-primary"
-                          : "text-foreground hover:bg-muted"
-                      }`}
-                    >
-                      {link.label}
-                    </Link>
-                  ))}
-                </div>
-              </div>
-
-              <div className="border-t border-border px-4 py-4">
-                <div className="flex flex-col gap-2">
-                  <a href="/login" onClick={() => setOpen(false)}>
-                    <Button variant="outline" className="w-full rounded-md">Log In</Button>
-                  </a>
-                  <a href="https://wa.me/2349017758165" target="_blank" rel="noopener noreferrer" onClick={() => setOpen(false)}>
-                    <Button className="w-full gap-2 rounded-md bg-primary text-white hover:opacity-90">
-                      Get Started <ArrowRight className="h-4 w-4" />
-                    </Button>
-                  </a>
-                </div>
-              </div>
-            </div>
-          </SheetContent>
-        </Sheet>
+        <button
+          type="button"
+          aria-label={open ? "Close menu" : "Open menu"}
+          aria-expanded={open}
+          aria-controls="mobile-nav-panel"
+          onClick={() => setOpen((v) => !v)}
+          className={`md:hidden inline-flex h-11 w-11 items-center justify-center rounded-sm border transition-colors ${
+            open
+              ? "border-border bg-background text-foreground"
+              : darkHero
+              ? "border-white/20 text-white hover:bg-white/10"
+              : "border-border/60 text-foreground hover:bg-muted"
+          }`}
+        >
+          {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+        </button>
       </div>
+
+      {/* Mobile full-screen panel */}
+      {open && (
+        <div
+          id="mobile-nav-panel"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Site navigation"
+          className="md:hidden fixed inset-x-0 bottom-0 top-16 z-50 flex flex-col bg-background animate-in fade-in slide-in-from-top-2 duration-200"
+        >
+          <div className="flex items-center justify-between border-b border-border/70 px-5 py-4">
+            <Link to="/" onClick={close} aria-label="Clinexus home">
+              <img src={clinexusLogo} alt="Clinexus" className="h-8" />
+            </Link>
+            <button
+              type="button"
+              aria-label="Close menu"
+              onClick={close}
+              className="inline-flex h-11 w-11 items-center justify-center rounded-sm border border-border/70 text-foreground transition-colors hover:bg-muted"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
+
+          <div className="flex-1 overflow-y-auto">
+            <div className="divide-y divide-border/60">
+              {mobileGroups.map((group) => {
+                const expanded = openGroup === group.label;
+                return (
+                  <div key={group.label}>
+                    <button
+                      type="button"
+                      aria-expanded={expanded}
+                      onClick={() =>
+                        setOpenGroup(expanded ? null : group.label)
+                      }
+                      className="flex w-full items-center justify-between px-5 py-5 text-left text-lg font-medium text-foreground transition-colors hover:bg-muted/50"
+                    >
+                      {group.label}
+                      <ChevronDown
+                        className={`h-5 w-5 text-muted-foreground transition-transform duration-200 ${
+                          expanded ? "rotate-180" : ""
+                        }`}
+                      />
+                    </button>
+                    {expanded && (
+                      <div className="flex flex-col pb-3">
+                        {group.items.map((item) => (
+                          <Link
+                            key={item.label}
+                            to={item.to}
+                            onClick={close}
+                            className={`px-5 py-3.5 pl-8 text-base transition-colors ${
+                              location.pathname === item.to
+                                ? "text-primary"
+                                : "text-muted-foreground hover:text-foreground"
+                            }`}
+                          >
+                            {item.label}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+
+              {mobileDirect.map((link) => (
+                <Link
+                  key={link.label}
+                  to={link.to}
+                  onClick={close}
+                  className={`block px-5 py-5 text-lg font-medium transition-colors hover:bg-muted/50 ${
+                    location.pathname === link.to
+                      ? "text-primary"
+                      : "text-foreground"
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+
+            <div className="space-y-3 border-t border-border/60 px-5 py-6">
+              <a
+                href="mailto:support@clinexus.com"
+                className="flex items-center gap-3 text-sm text-muted-foreground transition-colors hover:text-foreground"
+              >
+                <Mail className="h-4 w-4" />
+                support@clinexus.com
+              </a>
+              <a
+                href="tel:+2349017758165"
+                className="flex items-center gap-3 text-sm text-muted-foreground transition-colors hover:text-foreground"
+              >
+                <Phone className="h-4 w-4" />
+                +234 901 775 8165
+              </a>
+            </div>
+          </div>
+
+          <div className="space-y-3 border-t border-border bg-background px-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-4">
+            <a href="/login" onClick={close} className="block">
+              <Button variant="outline" className="h-12 w-full rounded-sm text-base">
+                Log In
+              </Button>
+            </a>
+            <a
+              href="https://wa.me/2349017758165"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={close}
+              className="block"
+            >
+              <Button className="h-12 w-full gap-2 rounded-sm bg-primary text-base text-primary-foreground hover:opacity-90">
+                Get Started <ArrowRight className="h-4 w-4" />
+              </Button>
+            </a>
+          </div>
+        </div>
+      )}
     </nav>
   );
 };
