@@ -24,6 +24,7 @@ import SiteAbout from "./site/pages/About";
 import SiteContact from "./site/pages/Contact";
 import SitePrivacy from "./site/pages/Privacy";
 import SiteTerms from "./site/pages/Terms";
+import SiteCookies from "./site/pages/Cookies";
 import SiteTutorials from "./site/pages/Tutorials";
 import SiteTutorialClinicType from "./site/pages/TutorialClinicType";
 import SiteTutorialSection from "./site/pages/TutorialSection";
