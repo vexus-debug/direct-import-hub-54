@@ -1,9 +1,43 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, ArrowRight } from "lucide-react";
+import { Menu, ArrowRight, X, ChevronDown, Mail, Phone } from "lucide-react";
 import clinexusLogoWhite from "@/assets/site/clinexus-logo-white.png";
+import clinexusLogo from "@/assets/site/clinexus-logo.png";
+
+const mobileGroups = [
+  {
+    label: "Industries",
+    items: [
+      { label: "All industries", to: "/industries" },
+      { label: "Eye clinics", to: "/industries/eye-clinics" },
+      { label: "Dental clinics", to: "/industries/dental-clinics" },
+    ],
+  },
+  {
+    label: "Features",
+    items: [
+      { label: "Eye clinic features", to: "/industries/eye-clinics/features" },
+      { label: "Dental clinic features", to: "/industries/dental-clinics/features" },
+    ],
+  },
+  {
+    label: "Resources",
+    items: [
+      { label: "Tutorials", to: "/tutorials" },
+      { label: "Privacy Policy", to: "/privacy" },
+      { label: "Terms of Service", to: "/terms" },
+      { label: "Cookie Policy", to: "/cookies" },
+    ],
+  },
+];
+
+const mobileDirect = [
+  { label: "Home", to: "/" },
+  { label: "Tutorials", to: "/tutorials" },
+  { label: "About", to: "/about" },
+  { label: "Contact", to: "/contact" },
+];
 
 const navLinks = [
   { label: "Home", to: "/" },
