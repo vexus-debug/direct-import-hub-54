@@ -1,9 +1,10 @@
 import Layout from "@/site/components/Layout";
 import PageHero from "@/site/components/PageHero";
 import { Link, useParams, Navigate } from "react-router-dom";
-import { motion } from "framer-motion";
-import { ArrowRight, ChevronRight } from "lucide-react";
-import { getClinicType } from "@/site/data/tutorials";
+import { ArrowLeft, ArrowRight } from "lucide-react";
+import TutorialBreadcrumbs from "@/site/components/tutorials/TutorialBreadcrumbs";
+import TutorialSidebar from "@/site/components/tutorials/TutorialSidebar";
+import { getClinicType, countTutorials } from "@/site/data/tutorials";
 
 const TutorialClinicType = () => {
   const { clinicType } = useParams();
@@ -11,50 +12,60 @@ const TutorialClinicType = () => {
 
   if (!clinic) return <Navigate to="/tutorials" replace />;
 
+  const total = countTutorials(clinic);
+
   return (
     <Layout>
-      <PageHero
-        eyebrow="Tutorials"
-        title={clinic.name}
-        description={clinic.description}
-      />
+      <PageHero eyebrow="Tutorials" title={clinic.name} description={clinic.description} />
 
-      <section className="py-16 md:py-20">
-        <div className="container">
-          <nav className="mb-10 flex items-center gap-2 text-sm text-muted-foreground">
-            <Link to="/tutorials" className="hover:text-foreground">Tutorials</Link>
-            <ChevronRight className="h-3.5 w-3.5" />
-            <span className="text-foreground">{clinic.name}</span>
-          </nav>
+      <section className="py-12 md:py-16">
+        <div className="container max-w-6xl">
+          <TutorialBreadcrumbs
+            items={[{ label: "Tutorials", to: "/tutorials" }, { label: clinic.name }]}
+          />
 
-          <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-            {clinic.sections.map((section, i) => (
-              <motion.div
-                key={section.slug}
-                initial={{ opacity: 0, y: 14 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: Math.min(i, 6) * 0.05 }}
-              >
+          <div className="mt-8 grid gap-10 lg:grid-cols-[15rem_1fr]">
+            <TutorialSidebar clinic={clinic} />
+
+            <div>
+              <p className="text-sm text-muted-foreground">
+                {clinic.sections.length} topics · {total} {total === 1 ? "guide" : "guides"} available
+              </p>
+
+              <ol className="mt-5 divide-y divide-border/70 overflow-hidden rounded-md border border-border/70 bg-card">
+                {clinic.sections.map((section, i) => (
+                  <li key={section.slug}>
+                    <Link
+                      to={`/tutorials/${clinic.slug}/${section.slug}`}
+                      className="group flex items-start gap-5 px-6 py-5 transition-colors hover:bg-muted/40"
+                    >
+                      <span className="mt-0.5 w-6 shrink-0 text-xs font-semibold tabular-nums text-muted-foreground">
+                        {String(i + 1).padStart(2, "0")}
+                      </span>
+                      <span className="min-w-0 flex-1">
+                        <span className="block text-sm font-semibold">{section.title}</span>
+                        <span className="mt-1 block text-sm leading-relaxed text-muted-foreground">
+                          {section.description}
+                        </span>
+                      </span>
+                      <span className="hidden shrink-0 pt-0.5 text-xs text-muted-foreground sm:block">
+                        {section.tutorials.length > 0 ? `${section.tutorials.length} guides` : "Coming soon"}
+                      </span>
+                      <ArrowRight className="mt-0.5 h-4 w-4 shrink-0 text-primary transition-transform group-hover:translate-x-1" />
+                    </Link>
+                  </li>
+                ))}
+              </ol>
+
+              <div className="mt-10 border-t border-border/70 pt-6">
                 <Link
-                  to={`/tutorials/${clinic.slug}/${section.slug}`}
-                  className="group flex h-full flex-col rounded-lg border border-border/60 bg-card p-6 transition-all hover:border-primary/40 hover:shadow-md"
+                  to="/tutorials"
+                  className="inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
                 >
-                  <h2 className="text-base font-semibold">{section.title}</h2>
-                  <p className="mt-2 flex-1 text-sm leading-relaxed text-muted-foreground">
-                    {section.description}
-                  </p>
-                  <div className="mt-5 flex items-center justify-between text-xs">
-                    <span className="text-muted-foreground">
-                      {section.tutorials.length > 0
-                        ? `${section.tutorials.length} guides`
-                        : "Coming soon"}
-                    </span>
-                    <ArrowRight className="h-4 w-4 text-primary transition-transform group-hover:translate-x-1" />
-                  </div>
+                  <ArrowLeft className="h-4 w-4" /> All tutorials
                 </Link>
-              </motion.div>
-            ))}
+              </div>
+            </div>
           </div>
         </div>
       </section>
