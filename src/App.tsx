@@ -196,6 +196,7 @@ const App = () => (
             <Route path="/contact" element={<SiteContact />} />
             <Route path="/privacy" element={<SitePrivacy />} />
             <Route path="/terms" element={<SiteTerms />} />
+            <Route path="/cookies" element={<SiteCookies />} />
             <Route path="/tutorials" element={<SiteTutorials />} />
             <Route path="/tutorials/:clinicType" element={<SiteTutorialClinicType />} />
             <Route path="/tutorials/:clinicType/:section" element={<SiteTutorialSection />} />
